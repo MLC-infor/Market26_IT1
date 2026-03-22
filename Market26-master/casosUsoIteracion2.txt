@@ -1,0 +1,40 @@
+PROPUESTA DE CASOS DE USO - ITERACIÓN 2
+
+1. FUNCIONALIDADES OBLIGATORIAS REQUERIDAS
+
+* Caso de Uso: Seleccionar Oferta Ganadora
+  - Actor: Vendedor
+  - Descripción: El vendedor visualiza todas las ofertas realizadas por los diferentes compradores para su producto. El vendedor decide a quién vendérselo seleccionando una oferta concreta. Al hacerlo, la venta se cierra y se rechazan las demás ofertas.
+
+* Caso de Uso: Procesar Cobro
+  - Actor: Sistema / Comprador
+  - Descripción: En el momento en que se cierra una venta, el sistema se encarga de cobrar automáticamente al comprador el precio acordado, restándolo de su saldo.
+
+2. PROPUESTA DE 4 NUEVOS CASOS DE USO 
+
+* Caso de Uso 1: Recargar Saldo
+  - Actor: Comprador
+  - Descripción: Para que el sistema pueda cobrar al comprador, este debe tener dinero en la plataforma. Este caso de uso permite al comprador ingresar fondos en su monedero virtual.
+
+* Caso de Uso 2: Consultar Historial de Movimientos
+  - Actor: Usuario (Comprador y Vendedor)
+  - Descripción: Permite al usuario ver un registro detallado de las transacciones (dinero gastado en compras o dinero ingresado por ventas).
+
+* Caso de Uso 3: Retirar Fondos
+  - Actor: Vendedor
+  - Descripción: El vendedor puede solicitar que el saldo que ha ganado mediante sus ventas sea transferido fuera de la plataforma.
+
+* Caso de Uso 4: Valorar Transacción
+  - Actor: Usuario (Comprador y Vendedor)
+  - Descripción: Una vez finalizada y cobrada la compra, ambos usuarios pueden dejarse una reseña pública (puntuación de 1 a 5 y un comentario) para generar confianza en la aplicación.
+
+3. NUEVAS CLASES DEL DOMINIO NECESARIAS (Mínimo 2 exigidas)
+
+1. Clase: "Monedero" 
+   - Justificación: Es imprescindible para los casos de uso "Procesar Cobro", "Recargar Saldo" y "Retirar Fondos". Almacenará el saldo disponible. Estará asociada a la clase User (1 a 1).
+
+2. Clase: "Transaccion" 
+   - Justificación: Necesaria para el caso de uso "Consultar Historial de Movimientos". Guardará el importe, la fecha y si es un ingreso o un gasto. Estará asociada al Monedero y a la Venta (Sale).
+
+3. Clase: "Valoracion"
+   - Justificación: Necesaria para el caso de uso "Valorar Transacción". Almacenará la puntuación y el texto. Estará asociada al User (autor y receptor) y a la Venta (Sale).
