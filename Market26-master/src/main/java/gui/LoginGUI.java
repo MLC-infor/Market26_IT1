@@ -62,11 +62,18 @@ public class LoginGUI extends JFrame {
                 domain.User usuario = facade.hacerLogin(email, pass);
                 
                 if (usuario != null) {
-                    lblMessage.setForeground(new Color(0, 153, 0)); // Verde
-                    lblMessage.setText(ResourceBundle.getBundle("Etiquetas").getString("LoginGUI.Success") + " " + usuario.getName());
+                    // 1. Mostramos una ventana emergente de "Éxito" que el usuario tiene que leer y darle a OK
+                    JOptionPane.showMessageDialog(null, 
+                        "¡Bienvenido/a " + usuario.getName() + "!\nHas iniciado sesión correctamente.", 
+                        "Login Exitoso", 
+                        JOptionPane.INFORMATION_MESSAGE);
                     
-                    // Aquí en el futuro podrías abrir la ventana de Comprador o Vendedor
-                    // y cerrar esta con: this.setVisible(false);
+                    // 2. Cuando le da a OK, abrimos la ventana principal NUEVA con su email
+                    MainGUI nuevoMain = new MainGUI(usuario.getEmail());
+                    nuevoMain.setVisible(true);
+                    
+                    // 3. Cerramos la ventanita de login
+                    dispose(); 
                 } else {
                     lblMessage.setText(ResourceBundle.getBundle("Etiquetas").getString("LoginGUI.ErrorLogin"));
                 }

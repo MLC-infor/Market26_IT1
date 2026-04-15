@@ -10,47 +10,77 @@ import domain.Buyer;
 import businessLogic.BLFacade;
 
 public class ShowSaleGUI extends JFrame {
-    private JTextField fieldOffer = new JTextField();
-    private JButton btnMakeOffer = new JButton("Hacer Oferta");
     private JFrame thisFrame;
 
-    public ShowSaleGUI(Sale sale) {
+    // Recibimos la venta en la que han hecho clic y el email del que está mirando la pantalla
+    public ShowSaleGUI(Sale sale, String emailLogueado) {
         thisFrame = this;
-        setTitle("Detalle de Venta");
-        setSize(450, 400);
+        setTitle("Detalle de Producto");
+        setSize(400, 250);
         getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
 
-        JLabel lblInfo = new JLabel("Producto: " + sale.getTitulo() + " - Precio: " + sale.getPrecioOriginal() + "€");
-        lblInfo.setBounds(20, 20, 400, 20);
+        JLabel lblInfo = new JLabel("Producto: " + sale.getTitulo() + " - Precio Original: " + sale.getPrecioOriginal() + "€");
+        lblInfo.setBounds(20, 20, 350, 20);
+        lblInfo.setFont(new Font("Tahoma", Font.BOLD, 12));
         getContentPane().add(lblInfo);
 
-        JLabel lblTuOferta = new JLabel("Tu Oferta (€):");
-        lblTuOferta.setBounds(20, 100, 100, 20);
-        getContentPane().add(lblTuOferta);
+        // 🎓 MAGIA DE UX: Comparamos el email logueado con el del dueño de la venta
+        if (emailLogueado.equals(sale.getVendedor().getEmail())) {
+            
+            // --- ERES EL VENDEDOR (Dueño) ---
+            JLabel lblAviso = new JLabel("¡Eres el creador de esta venta!");
+            lblAviso.setForeground(Color.BLUE);
+            lblAviso.setBounds(100, 60, 200, 20);
+            getContentPane().add(lblAviso);
 
-        fieldOffer.setBounds(130, 100, 80, 20);
-        getContentPane().add(fieldOffer);
+            JButton btnGestionar = new JButton("Gestionar Venta y Ver Ofertas");
+            btnGestionar.setBounds(75, 100, 250, 40);
+            btnGestionar.setBackground(new Color(255, 200, 200)); // Rojito
+            getContentPane().add(btnGestionar);
 
-        btnMakeOffer.setBounds(220, 95, 150, 30);
-        getContentPane().add(btnMakeOffer);
+            btnGestionar.addActionListener(e -> {
+                // Le pasamos su email correcto
+                JFrame g = new CerrarVentaGUI(sale, emailLogueado); 
+                g.setVisible(true);
+                thisFrame.dispose();
+            });
 
-        btnMakeOffer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        } else {
+            
+            // --- ERES UN COMPRADOR (No eres el dueño) ---
+            JLabel lblTuOferta = new JLabel("Tu Oferta (€):");
+            lblTuOferta.setBounds(20, 100, 100, 20);
+            getContentPane().add(lblTuOferta);
+
+            JTextField fieldOffer = new JTextField();
+            fieldOffer.setBounds(130, 100, 80, 25);
+            getContentPane().add(fieldOffer);
+
+            JButton btnMakeOffer = new JButton("Hacer Oferta");
+            btnMakeOffer.setBounds(220, 95, 140, 35);
+            btnMakeOffer.setBackground(new Color(200, 255, 200)); // Verdecito
+            getContentPane().add(btnMakeOffer);
+
+            btnMakeOffer.addActionListener(e -> {
                 try {
-                    float precio = Float.parseFloat(fieldOffer.getText());
-                    BLFacade facade = MainGUI.getBusinessLogic();
-                    // Usamos el comprador de prueba
-                    Buyer comprador = new Buyer("comprador1@gmail.com", "1234", "Iker");
-                    Bid b = facade.crearBid(precio, comprador, sale);
+                    float precio = Float.parseFloat(fieldOffer.getText().replace(",", "."));
+                    if(precio <= 0) throw new NumberFormatException();
+
+                    Buyer compradorActual = new Buyer(emailLogueado, "", ""); 
+                    Bid b = MainGUI.getBusinessLogic().crearBid(precio, compradorActual, sale);
+                    
                     if (b != null) {
-                        JOptionPane.showMessageDialog(null, "Oferta enviada. Estado: " + b.getEstado());
-                        thisFrame.setVisible(false);
+                        JOptionPane.showMessageDialog(thisFrame, "¡Oferta enviada correctamente!");
+                        thisFrame.dispose();
+                    } else {
+                        // 🎓 AVISO AL USUARIO
+                        JOptionPane.showMessageDialog(thisFrame, "Error: No tienes saldo suficiente en tu Billetera para hacer esta oferta.", "Saldo Insuficiente", JOptionPane.WARNING_MESSAGE);
                     }
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error en el precio");
+                    JOptionPane.showMessageDialog(thisFrame, "Error: Introduce un precio válido.");
                 }
-            }
-        });
-        setVisible(true);
+            });
+        }
     }
 }

@@ -27,9 +27,10 @@ public class MainGUI extends JFrame {
 	private JPanel jContentPane = null;
 	private JButton jButtonCreateQuery = null;
 	private JButton jButtonQueryQueries = null;
-	private JButton jButtonRegister = null; // NUEVO BOTÓN
+	private JButton jButtonRegister = null; 
 	private JButton jButtonLogin = null;
 	private JButton jButtonVerAceptadas = null;
+	private JButton jButtonBilletera = null; // NUEVO BOTÓN ITERACIÓN 2
 
 	private static BLFacade appFacadeInterface;
 	
@@ -55,8 +56,12 @@ public class MainGUI extends JFrame {
 
 		this.sellerMail=mail;
 		
-		// He hecho la ventana un poco más alta para que quepa el nuevo botón (de 290 a 340)
-		this.setSize(495, 340); 
+		// Ajustado para que quepa el nuevo botón
+		this.setSize(495, 390); 
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		
+		// Y esta otra para que, si el usuario la hace pequeña, se quede en el centro y no en una esquina
+		this.setLocationRelativeTo(null);
 		jLabelSelectOption = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.SelectOption"));
 		jLabelSelectOption.setFont(new Font("Tahoma", Font.BOLD, 13));
 		jLabelSelectOption.setForeground(Color.BLACK);
@@ -107,12 +112,12 @@ public class MainGUI extends JFrame {
 		jButtonQueryQueries.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.QuerySales"));
 		jButtonQueryQueries.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				JFrame a = new QuerySalesGUI();
+				// 🎓 AQUÍ ESTÁ EL CAMBIO: Le pasamos el 'sellerMail' (que es el email del usuario logueado)
+				JFrame a = new QuerySalesGUI(sellerMail); 
 				a.setVisible(true);
 			}
 		});
 		
-		// CONFIGURACIÓN DEL NUEVO BOTÓN
 		jButtonRegister = new JButton(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.Register"));
 		jButtonRegister.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -129,24 +134,33 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
-		// NUEVO BOTÓN: Ver Ventas Aceptadas
-		// Cambia la línea de creación por esta:
 		jButtonVerAceptadas = new JButton(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.VerAceptadas"));
         jButtonVerAceptadas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                JFrame a = new VerOfertasAceptadasGUI();
+                JFrame a = new VerOfertasAceptadasGUI(sellerMail);
+                a.setVisible(true);
+            }
+        });
+
+        // --- NUEVO BOTÓN: MI BILLETERA ---
+        jButtonBilletera = new JButton(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.Billetera"));
+        jButtonBilletera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                // Abrimos la ventana que creamos en el paso anterior
+                JFrame a = new BilleteraGUI(sellerMail);
                 a.setVisible(true);
             }
         });
 		
         jContentPane = new JPanel();
-        jContentPane.setLayout(new GridLayout(7, 1, 0, 0)); // Cambiado a 7 filas
+        jContentPane.setLayout(new GridLayout(8, 1, 0, 0)); // Cambiado a 8 filas
         jContentPane.add(jLabelSelectOption);
         jContentPane.add(jButtonCreateQuery);
         jContentPane.add(jButtonQueryQueries);
         jContentPane.add(jButtonRegister);
         jContentPane.add(jButtonLogin);
-        jContentPane.add(jButtonVerAceptadas); // Añadimos el nuevo botón al panel
+        jContentPane.add(jButtonVerAceptadas); 
+        jContentPane.add(jButtonBilletera); // Añadimos la billetera al menú
         jContentPane.add(panel);
 		
 		setContentPane(jContentPane);
@@ -166,10 +180,9 @@ public class MainGUI extends JFrame {
 		jButtonCreateQuery.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.CreateSale"));
 		this.setTitle(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.MainTitle")+ ": "+sellerMail);
 		
-		// ESTAS SON LAS DOS LÍNEAS NUEVAS:
 		jButtonRegister.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.Register"));
 		jButtonLogin.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.Login"));
 		jButtonVerAceptadas.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.VerAceptadas"));
+		jButtonBilletera.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.Billetera"));
 	}
-	
 }

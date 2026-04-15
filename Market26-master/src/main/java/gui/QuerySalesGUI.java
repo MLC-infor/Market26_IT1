@@ -27,6 +27,8 @@ public class QuerySalesGUI extends JFrame {
 	private DefaultTableModel tableModelProducts;
 
 	private JFrame thisFrame; 
+	
+	private String emailLogueado;
 
 	private String[] columnNamesProducts = new String[] {
 			ResourceBundle.getBundle("Etiquetas").getString("CreateSaleGUI.Title"), 
@@ -36,7 +38,8 @@ public class QuerySalesGUI extends JFrame {
 	
 	private JTextField jTextFieldSearch;
 	
-	public QuerySalesGUI() {
+	public QuerySalesGUI(String email) {
+		this.emailLogueado = email;
 		tableProducts.setEnabled(false);
 		thisFrame=this;
 		this.getContentPane().setLayout(null);
@@ -124,7 +127,11 @@ public class QuerySalesGUI extends JFrame {
 					Point point = mouseEvent.getPoint();
 					int row = table.rowAtPoint(point);
 					Sale s=(Sale) tableModelProducts.getValueAt(row, 3);
-					new ShowSaleGUI(s);
+					
+					// 🎓 AQUÍ ESTÁ EL SEGUNDO CAMBIO
+					ShowSaleGUI ventanaOferta = new ShowSaleGUI(s, emailLogueado);
+					ventanaOferta.setLocationRelativeTo(null); 
+					ventanaOferta.setVisible(true);
 				}
 			}
 		});

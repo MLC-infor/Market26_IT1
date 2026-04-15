@@ -87,4 +87,8 @@ public class Bid {
     public void setOferta(Sale oferta) {
         this.oferta = oferta;
     }
+    @Override
+    public String toString() {
+        return this.comprador.getEmail() + " (" + this.precioPropuesto + "€)";
+    }
 }

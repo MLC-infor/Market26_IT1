@@ -1,0 +1,36 @@
+PROPUESTA DE CASOS DE USO - ITERACIÓN 3
+1. PROPUESTA DE NUEVOS CASOS DE USO (Mínimo 3 requeridos)
+
+Caso de Uso 1: Ver Valoración Media de Usuario
+
+Actor: Usuario (Comprador y Vendedor)
+
+Descripción: Antes de pujar por un producto o aceptar una oferta, el usuario puede consultar el perfil de la otra persona para ver su nota media (ej. 4.5 sobre 5 estrellas) calculada a partir del histórico de valoraciones que ha recibido en compras anteriores.
+
+Caso de Uso 2: Comprar Suscripción VIP
+
+Actor: Usuario (Comprador y Vendedor)
+
+Descripción: Permite a un usuario pagar una cuota (ej. 5€) que se descontará automáticamente de su Monedero. A cambio, obtendrá el estado VIP, lo que le otorgará ventajas como que su nombre aparezca resaltado en dorado y que sus ofertas se posicionen las primeras.
+
+Caso de Uso 3: Hacer Pregunta sobre Producto
+
+Actor: Comprador
+
+Descripción: Si un comprador tiene dudas sobre un producto antes de pujar, puede escribir una pregunta pública en la página de la oferta para que el vendedor la aclare.
+
+Caso de Uso 4: Responder Pregunta
+
+Actor: Vendedor
+
+Descripción: El vendedor puede visualizar las preguntas que han dejado los compradores en sus productos y escribir una respuesta pública que quedará visible para todos los futuros visitantes.
+
+2. NUEVAS CLASES DEL DOMINIO NECESARIAS (Mínimo 2 requeridas)
+
+Clase: "SuscripcionVIP"
+
+Justificación: Necesaria para el caso de uso "Comprar Suscripción VIP". Controlará la fecha de inicio, la fecha de caducidad y el estado activo. Estará asociada a la clase User (1 a 1).
+
+Clase: "Pregunta"
+
+Justificación: Requerida para los casos de uso de preguntar y responder. Guardará el texto de la duda, el texto de la respuesta (que puede estar vacío al principio), y la fecha. Estará asociada a la clase Sale (la venta sobre la que se pregunta) y a la clase User (el autor de la pregunta).
