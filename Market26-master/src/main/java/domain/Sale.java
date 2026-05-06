@@ -34,10 +34,15 @@ public class Sale implements Serializable {
     // Relación con las solicitudes/bids (El "0..*" del diagrama)
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Bid> bidsRecibidas = new ArrayList<>();
+    
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Pregunta> preguntas = new ArrayList<Pregunta>();
 
     // Constructor vacío obligatorio para JPA
     public Sale() {
     }
+    
+    private String urlImagen;
 
     // Constructor con parámetros
     public Sale(String titulo, String descripcion, float precioOriginal, String estado, Date fecha, int foto, Seller vendedor) {
@@ -79,6 +84,17 @@ public class Sale implements Serializable {
     public List<Bid> getBidsRecibidas() { return bidsRecibidas; }
     public void setBidsRecibidas(List<Bid> bidsRecibidas) { this.bidsRecibidas = bidsRecibidas; }
     
+    public List<Pregunta> getPreguntas() { return preguntas; }
+    public void setPreguntas(List<Pregunta> preguntas) { this.preguntas = preguntas; }
+    public void addPregunta(Pregunta p) { this.preguntas.add(p); }
+    
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
+    }
     // Método de ayuda para añadir una solicitud (Bid) a esta oferta
     public void addBid(Bid bid) {
         this.bidsRecibidas.add(bid);

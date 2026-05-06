@@ -16,7 +16,8 @@ import exceptions.SaleAlreadyExistException;
 @WebService
 public interface BLFacade {
 
-    @WebMethod public Sale createSale(String title, String description, int status, float price, Date pubDate, String sellerEmail, File file) throws FileNotUploadedException, MustBeLaterThanTodayException, SaleAlreadyExistException;
+	@WebMethod 
+	public Sale createSale(String title, String description, int status, float price, Date pubDate, String sellerEmail, String urlImagen) throws FileNotUploadedException, MustBeLaterThanTodayException, SaleAlreadyExistException;
     
     @WebMethod public List<Sale> getSales(String desc);
     
@@ -48,4 +49,24 @@ public interface BLFacade {
     @WebMethod
     public boolean valorarVendedor(int puntuacion, String comentario, String emailComprador, String emailVendedor, Sale venta);
 
+    /**
+     * Calcula la nota media de un vendedor basada en las valoraciones de sus ventas.
+     * @param emailVendedor El email del vendedor a consultar.
+     * @return La media sobre 5, o 0.0 si no tiene valoraciones.
+     */
+    public float getValoracionMedia(String emailVendedor);
+    
+    public boolean comprarSuscripcionVIP(String emailUsuario);
+    
+    /**
+     * Un comprador hace una pregunta en una venta.
+     */
+    public domain.Pregunta hacerPregunta(String duda, Integer idVenta, String emailComprador);
+
+    /**
+     * El vendedor responde a una pregunta existente.
+     */
+    public boolean responderPregunta(Integer idPregunta, String respuesta);
+    
+    public float getSaldoUsuario(String email);
 }

@@ -21,47 +21,85 @@ public class RegisterGUI extends JFrame {
 
     public RegisterGUI() {
         setTitle(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Title"));
-        setBounds(100, 100, 450, 400);
+        setBounds(100, 100, 420, 520); // Ventana más alta
+        setLocationRelativeTo(null); // Centrar
+        getContentPane().setBackground(Color.WHITE); // Fondo blanco
         getContentPane().setLayout(null);
         
+        // Título interior
+        JLabel lblTitulo = new JLabel("Crear una Cuenta");
+        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblTitulo.setForeground(new Color(50, 50, 50));
+        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitulo.setBounds(0, 20, 400, 30);
+        getContentPane().add(lblTitulo);
+        
+        Font labelFont = new Font("SansSerif", Font.BOLD, 12);
+        Color labelColor = Color.DARK_GRAY;
+        
         JLabel lblName = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Name"));
-        lblName.setBounds(50, 40, 100, 20);
+        lblName.setFont(labelFont);
+        lblName.setForeground(labelColor);
+        lblName.setBounds(60, 70, 300, 20);
         getContentPane().add(lblName);
         
         nameField = new JTextField();
-        nameField.setBounds(180, 40, 200, 20);
+        nameField.setBounds(60, 95, 280, 30);
+        nameField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         getContentPane().add(nameField);
         
         JLabel lblEmail = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Email"));
-        lblEmail.setBounds(50, 90, 100, 20);
+        lblEmail.setFont(labelFont);
+        lblEmail.setForeground(labelColor);
+        lblEmail.setBounds(60, 135, 300, 20);
         getContentPane().add(lblEmail);
         
         emailField = new JTextField();
-        emailField.setBounds(180, 90, 200, 20);
+        emailField.setBounds(60, 160, 280, 30);
+        emailField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         getContentPane().add(emailField);
         
         JLabel lblPass = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Password"));
-        lblPass.setBounds(50, 140, 100, 20);
+        lblPass.setFont(labelFont);
+        lblPass.setForeground(labelColor);
+        lblPass.setBounds(60, 200, 300, 20);
         getContentPane().add(lblPass);
         
         passField = new JPasswordField();
-        passField.setBounds(180, 140, 200, 20);
+        passField.setBounds(60, 225, 280, 30);
+        passField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         getContentPane().add(passField);
         
         JLabel lblRepeatPass = new JLabel(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.RepeatPassword"));
-        lblRepeatPass.setBounds(50, 190, 130, 20);
+        lblRepeatPass.setFont(labelFont);
+        lblRepeatPass.setForeground(labelColor);
+        lblRepeatPass.setBounds(60, 265, 300, 20);
         getContentPane().add(lblRepeatPass);
         
         repeatPassField = new JPasswordField();
-        repeatPassField.setBounds(180, 190, 200, 20);
+        repeatPassField.setBounds(60, 290, 280, 30);
+        repeatPassField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         getContentPane().add(repeatPassField);
         
+        // RadioButtons
         rdbtnSeller = new JRadioButton(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Seller"));
-        rdbtnSeller.setBounds(80, 240, 100, 20);
+        rdbtnSeller.setBackground(Color.WHITE);
+        rdbtnSeller.setFont(labelFont);
+        rdbtnSeller.setBounds(80, 340, 100, 20);
         getContentPane().add(rdbtnSeller);
         
         rdbtnBuyer = new JRadioButton(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Buyer"));
-        rdbtnBuyer.setBounds(230, 240, 100, 20);
+        rdbtnBuyer.setBackground(Color.WHITE);
+        rdbtnBuyer.setFont(labelFont);
+        rdbtnBuyer.setBounds(220, 340, 100, 20);
         rdbtnBuyer.setSelected(true); 
         getContentPane().add(rdbtnBuyer);
         
@@ -69,13 +107,21 @@ public class RegisterGUI extends JFrame {
         bgroup.add(rdbtnSeller);
         bgroup.add(rdbtnBuyer);
         
+        // Botón Registrarse
         JButton btnRegister = new JButton(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.RegisterButton"));
-        btnRegister.setBounds(160, 290, 120, 30);
+        btnRegister.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnRegister.setBackground(new Color(60, 179, 113)); // Verde mar moderno
+        btnRegister.setForeground(Color.WHITE);
+        btnRegister.setFocusPainted(false);
+        btnRegister.setBorderPainted(false);
+        btnRegister.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegister.setBounds(60, 385, 280, 40);
         getContentPane().add(btnRegister);
         
         lblMessage = new JLabel("");
-        lblMessage.setBounds(50, 330, 350, 20);
-        lblMessage.setForeground(Color.RED);
+        lblMessage.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        lblMessage.setBounds(30, 435, 340, 20);
+        lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
         getContentPane().add(lblMessage);
         
         btnRegister.addActionListener(new ActionListener() {
@@ -103,12 +149,11 @@ public class RegisterGUI extends JFrame {
                 boolean exito = facade.registrarUsuario(name, email, pass, isSeller);
                 
                 if (exito) {
-                    lblMessage.setForeground(new Color(0, 153, 0)); // Verde oscuro más legible
-                    lblMessage.setText(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.Success"));
-                    nameField.setText("");
-                    emailField.setText("");
-                    passField.setText("");
-                    repeatPassField.setText("");
+                    JOptionPane.showMessageDialog(null, 
+                        "Cuenta creada exitosamente.\nYa puedes iniciar sesión.", 
+                        "Registro Completo", 
+                        JOptionPane.INFORMATION_MESSAGE);
+                    dispose(); // Cerramos la ventana de registro automáticamente para más comodidad
                 } else {
                     lblMessage.setText(ResourceBundle.getBundle("Etiquetas").getString("RegisterGUI.ErrorEmail"));
                 }

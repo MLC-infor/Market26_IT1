@@ -24,9 +24,9 @@ public class BLFacadeImplementation implements BLFacade {
     }
 
     @WebMethod
-    public Sale createSale(String title, String description, int status, float price, Date pubDate, String sellerEmail, File file) throws FileNotUploadedException, MustBeLaterThanTodayException, SaleAlreadyExistException {
+    public Sale createSale(String title, String description, int status, float price, Date pubDate, String sellerEmail, String urlImagen) throws FileNotUploadedException, MustBeLaterThanTodayException, SaleAlreadyExistException {
         dbManager.open();
-        Sale product = dbManager.createSale(title, description, status, price, pubDate, sellerEmail, file);
+        Sale product = dbManager.createSale(title, description, status, price, pubDate, sellerEmail, urlImagen);
         dbManager.close();
         return product;
     }
@@ -141,5 +141,45 @@ public class BLFacadeImplementation implements BLFacade {
         boolean exito = dbManager.valorarVendedor(puntuacion, comentario, emailComprador, emailVendedor, venta);
         dbManager.close();
         return exito;
+    }
+    
+    @Override
+    public float getValoracionMedia(String emailVendedor) {
+        dbManager.open();
+        float media = dbManager.getValoracionMedia(emailVendedor);
+        dbManager.close();
+        return media;
+    }
+    
+    @Override
+    public boolean comprarSuscripcionVIP(String emailUsuario) {
+        dbManager.open();
+        boolean exito = dbManager.comprarSuscripcionVIP(emailUsuario);
+        dbManager.close();
+        return exito;
+    }
+    
+    @Override
+    public domain.Pregunta hacerPregunta(String duda, Integer idVenta, String emailComprador) {
+        dbManager.open();
+        domain.Pregunta p = dbManager.hacerPregunta(duda, idVenta, emailComprador);
+        dbManager.close();
+        return p;
+    }
+
+    @Override
+    public boolean responderPregunta(Integer idPregunta, String respuesta) {
+        dbManager.open();
+        boolean exito = dbManager.responderPregunta(idPregunta, respuesta);
+        dbManager.close();
+        return exito;
+    }
+    
+    @Override
+    public float getSaldoUsuario(String email) {
+        dbManager.open();
+        float saldo = dbManager.getSaldoUsuario(email);
+        dbManager.close();
+        return saldo;
     }
 }

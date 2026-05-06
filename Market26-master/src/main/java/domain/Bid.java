@@ -56,6 +56,17 @@ public class Bid {
         this.precioPropuesto = precioPropuesto;
     }
 
+    // --- ALIAS PARA LA GUI ---
+    // La ventana CerrarVentaGUI busca estos métodos, así que los creamos para que devuelvan el valor correcto
+    public float getImporte() {
+        return this.precioPropuesto;
+    }
+
+    public Bid getBid() {
+        return this; // Por si algún componente de la interfaz o tabla exige obtener el objeto Bid directamente
+    }
+    // -------------------------
+
     public Date getFecha() {
         return fecha;
     }
@@ -87,6 +98,7 @@ public class Bid {
     public void setOferta(Sale oferta) {
         this.oferta = oferta;
     }
+    
     @Override
     public String toString() {
         return this.comprador.getEmail() + " (" + this.precioPropuesto + "€)";

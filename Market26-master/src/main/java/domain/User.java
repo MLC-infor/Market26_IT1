@@ -21,6 +21,9 @@ public abstract class User implements Serializable {
     // 🎓 ITERACIÓN 2: Relación 1 a 1 con Monedero
     @OneToOne(cascade = CascadeType.ALL)
     private Monedero monedero;
+    
+    @OneToOne(cascade = CascadeType.ALL)
+    private SuscripcionVIP suscripcion;
 
     public User() {
         this.monedero = new Monedero();
@@ -41,6 +44,13 @@ public abstract class User implements Serializable {
     public void setName(String name) { this.name = name; }
     public Monedero getMonedero() { return monedero; }
     public void setMonedero(Monedero monedero) { this.monedero = monedero; }
+    public SuscripcionVIP getSuscripcion() { return suscripcion; }
+    public void setSuscripcion(SuscripcionVIP suscripcion) { this.suscripcion = suscripcion; }
+    
+ // Para saber si es VIP rápido
+    public boolean esVIP() {
+        return suscripcion != null && suscripcion.isActiva();
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -92,13 +92,16 @@ public class DataAccess {
         return true;
     }
 
-    public Sale createSale(String title, String desc, int stat, float price, Date date, String email, File f) {
+    public Sale createSale(String title, String desc, int stat, float price, Date date, String email, String urlImagen) {
         db.getTransaction().begin();
         try {
             Seller s = db.find(Seller.class, email);
             
             // Creamos la oferta y nos aseguramos de que el estado sea "Abierta"
             Sale sale = s.addSale(title, desc, price, "Abierta", date, 0);
+            
+            // Asignamos la imagen a la VENTA (sale), no al vendedor (s)
+            sale.setUrlImagen(urlImagen);
             
             // 🎓 ¡LA CLAVE ESTÁ AQUÍ! Forzamos a la base de datos a guardar la oferta
             db.persist(sale); 
@@ -183,7 +186,7 @@ public class DataAccess {
 
             float precio = b.getPrecioPropuesto();
             
-            // 🎓 DOBLE VERIFICACIÓN (Parte 2): ¿Sigue teniendo el dinero?
+            // ¿Sigue teniendo el dinero?
             if (buyer.getMonedero().getSaldo() < precio) {
                 // Si no lo tiene, lanzamos un error y se cancela la transacción entera
                 throw new Exception("El comprador ya no tiene saldo suficiente.");
@@ -223,7 +226,7 @@ public class DataAccess {
                 db.getTransaction().commit();
                 return new ArrayList<>();
             }
-            // 🎓 Búsqueda por el objeto exacto en lugar del ID (mucho más seguro en ObjectDB)
+            //Búsqueda por el objeto exacto en lugar del ID (mucho más seguro en ObjectDB)
             TypedQuery<Transaccion> q = db.createQuery("SELECT t FROM Transaccion t WHERE t.monedero = :m", Transaccion.class);
             q.setParameter("m", u.getMonedero());
             List<Transaccion> res = q.getResultList();
@@ -266,7 +269,7 @@ public class DataAccess {
         }
     }
     
- // 🎓 Método necesario para buscar productos por texto (usado en QuerySalesGUI)
+ //Método necesario para buscar productos por texto (usado en QuerySalesGUI)
     public List<Sale> getSales(String desc) {
         System.out.println(">> DataAccess: getSales=> from= " + desc);
         List<Sale> res = new ArrayList<Sale>();
@@ -323,6 +326,147 @@ public class DataAccess {
         }
         db.getTransaction().rollback();
         return false;
+    }
+    
+    public float getValoracionMedia(String emailVendedor) {
+        try {
+            // Hacemos una consulta JPQL directa para que la base de datos calcule la media.
+            // Busca las valoraciones (v) de las ventas cuyo vendedor tenga este email.
+        	TypedQuery<Double> query = db.createQuery(
+        		    "SELECT AVG(v.puntuacion) FROM Valoracion v WHERE v.valorado.email = :email", 
+        		    Double.class
+        		);
+            query.setParameter("email", emailVendedor);
+            
+            Double media = query.getSingleResult();
+            
+            // Si el usuario no tiene ninguna valoración todavía, devuelve 0.0
+            if (media == null) {
+                return 0.0f;
+            }
+            
+            // Redondeamos a un decimal (ej. 4.5)
+            return (float) (Math.round(media * 10.0) / 10.0);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0f;
+        }
+    }
+    
+    public boolean comprarSuscripcionVIP(String emailUsuario) {
+        try {
+            db.getTransaction().begin();
+            User u = db.find(User.class, emailUsuario);
+            
+            // 1. Verificamos que el usuario y el monedero existan
+            if (u == null || u.getMonedero() == null) {
+                db.getTransaction().rollback();
+                return false;
+            }
+            
+            // 2. Verificamos que no sea YA un usuario VIP
+            if (u.esVIP()) {
+                db.getTransaction().rollback();
+                return false; 
+            }
+            
+            // 3. Verificamos si tiene saldo suficiente (Precio: 5.0€)
+            float PRECIO_VIP = 5.0f;
+            if (u.getMonedero().getSaldo() < PRECIO_VIP) {
+                db.getTransaction().rollback();
+                return false; // No hay dinero suficiente
+            }
+            
+         // 4. Cobramos el dinero
+            domain.Monedero m = u.getMonedero();
+            m.setSaldo(m.getSaldo() - PRECIO_VIP);
+            db.merge(m); // <--- AÑADE ESTA LÍNEA PARA FORZAR EL GUARDADO DEL NUEVO SALDO
+            
+            // 5. Calculamos la caducidad (30 días a partir de hoy)
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.add(java.util.Calendar.DAY_OF_MONTH, 30);
+            
+            // 6. Creamos la suscripción y se la asignamos al usuario
+            domain.SuscripcionVIP sub = new domain.SuscripcionVIP(u, cal.getTime());
+            u.setSuscripcion(sub);
+            db.persist(sub); // Guardamos la suscripción explícitamente por seguridad
+            
+            // 7. Creamos el recibo para el historial de movimientos
+            domain.Transaccion t = new domain.Transaccion(PRECIO_VIP, new java.util.Date(), "PAGO VIP", u.getMonedero(), null);
+            db.persist(t);
+            
+            // 8. Confirmamos los cambios en la base de datos
+            db.getTransaction().commit();
+            return true;
+            
+        } catch (Exception e) {
+            db.getTransaction().rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public domain.Pregunta hacerPregunta(String duda, Integer idVenta, String emailComprador) {
+        try {
+            db.getTransaction().begin();
+            domain.Sale venta = db.find(domain.Sale.class, idVenta);
+            domain.Buyer comprador = db.find(domain.Buyer.class, emailComprador);
+            
+            if (venta == null || comprador == null) {
+                db.getTransaction().rollback();
+                return null;
+            }
+            
+            // Creamos la pregunta (la respuesta empieza vacía automáticamente por tu constructor)
+            domain.Pregunta p = new domain.Pregunta(duda, venta, comprador);
+            
+            // La añadimos a la lista de la venta
+            venta.addPregunta(p);
+            db.persist(p);
+            
+            db.getTransaction().commit();
+            return p;
+        } catch (Exception e) {
+            db.getTransaction().rollback();
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean responderPregunta(Integer idPregunta, String respuesta) {
+        try {
+            db.getTransaction().begin();
+            domain.Pregunta p = db.find(domain.Pregunta.class, idPregunta);
+            
+            if (p == null) {
+                db.getTransaction().rollback();
+                return false;
+            }
+            
+            // Actualizamos el campo de la respuesta
+            p.setTextoRespuesta(respuesta);
+            
+            db.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            db.getTransaction().rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public float getSaldoUsuario(String email) {
+        try {
+            // Usamos una consulta directa para evitar que ObjectDB nos devuelva un dato "congelado" (cacheado)
+            javax.persistence.TypedQuery<Float> query = db.createQuery(
+                "SELECT m.saldo FROM User u JOIN u.monedero m WHERE u.email = :email", Float.class
+            );
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return 0.0f;
+        }
     }
     
 }
