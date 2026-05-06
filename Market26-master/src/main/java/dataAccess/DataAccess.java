@@ -328,28 +328,23 @@ public class DataAccess {
         return false;
     }
     
-    public float getValoracionMedia(String emailVendedor) {
+    public float getValoracionMedia(String email) {
         try {
-            // Hacemos una consulta JPQL directa para que la base de datos calcule la media.
-            // Busca las valoraciones (v) de las ventas cuyo vendedor tenga este email.
-        	TypedQuery<Double> query = db.createQuery(
-        		    "SELECT AVG(v.puntuacion) FROM Valoracion v WHERE v.valorado.email = :email", 
-        		    Double.class
-        		);
-            query.setParameter("email", emailVendedor);
+            // Al poner "domain.Valoracion", ObjectDB la encuentra aunque la base de datos esté vacía
+            javax.persistence.TypedQuery<Double> query = db.createQuery(
+                "SELECT AVG(v.puntuacion) FROM domain.Valoracion v WHERE v.valorado.email = :email", Double.class
+            );
+            query.setParameter("email", email);
             
             Double media = query.getSingleResult();
             
-            // Si el usuario no tiene ninguna valoración todavía, devuelve 0.0
             if (media == null) {
                 return 0.0f;
             }
-            
-            // Redondeamos a un decimal (ej. 4.5)
-            return (float) (Math.round(media * 10.0) / 10.0);
+            return media.floatValue();
             
         } catch (Exception e) {
-            e.printStackTrace();
+            // Si la tabla no existe porque la BD está limpia, capturamos el error y devolvemos 0
             return 0.0f;
         }
     }

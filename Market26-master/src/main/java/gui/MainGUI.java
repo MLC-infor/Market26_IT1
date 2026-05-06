@@ -23,7 +23,6 @@ public class MainGUI extends JFrame {
 	private JButton jButtonLogout = null; 
 	
 	private JLabel lblSaldo = null; 
-	private JLabel lblMiValoracion = null; // NUEVO: Etiqueta para la valoración
 
 	private static BLFacade appFacadeInterface;
 	
@@ -147,19 +146,12 @@ public class MainGUI extends JFrame {
         	jContentPane.add(panel);
         	setTitle(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.MainTitle") + ": " + sellerMail);
             
-            // --- HEADER CON EL SALDO Y VALORACIÓN ---
+            // --- HEADER CON EL SALDO ---
             JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 5));
             headerPanel.setBackground(new Color(245, 245, 245));
             headerPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200))); 
             
-            // 1. Etiqueta de Valoración
-            lblMiValoracion = new JLabel();
-            lblMiValoracion.setFont(new Font("SansSerif", Font.BOLD, 14));
-            lblMiValoracion.setForeground(new Color(218, 165, 32)); // Dorado
-            actualizarValoracion();
-            headerPanel.add(lblMiValoracion);
-            
-            // 2. Etiqueta de Saldo
+            // Etiqueta de Saldo
             lblSaldo = new JLabel();
             lblSaldo.setFont(new Font("SansSerif", Font.BOLD, 14));
             lblSaldo.setForeground(new Color(0, 100, 0)); 
@@ -187,19 +179,6 @@ public class MainGUI extends JFrame {
 	    }
 	}
 	
-	public void actualizarValoracion() {
-        if (sellerMail != null && !sellerMail.trim().isEmpty() && lblMiValoracion != null) {
-            float miValoracion = MainGUI.getBusinessLogic().getValoracionMedia(sellerMail);
-            String txtBase = ResourceBundle.getBundle("Etiquetas").getString("MainGUI.MyRating");
-            
-            if (miValoracion > 0) {
-                lblMiValoracion.setText(txtBase + " " + String.format("%.1f", miValoracion) + " / 5.0");
-            } else {
-                lblMiValoracion.setText(txtBase + " " + ResourceBundle.getBundle("Etiquetas").getString("MainGUI.NoVotes"));
-            }
-        }
-    }
-	
 	private void paintAgain() {
 		jLabelSelectOption.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.SelectOption"));
 		jButtonQueryQueries.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.QuerySales"));
@@ -213,7 +192,6 @@ public class MainGUI extends JFrame {
 		if(jButtonLogout != null) jButtonLogout.setText(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.LogoutButton"));
 		
 		actualizarSaldo();
-		actualizarValoracion(); // Actualizamos la traducción de la valoración
 		
 		if(sellerMail != null && !sellerMail.trim().isEmpty()) {
 			this.setTitle(ResourceBundle.getBundle("Etiquetas").getString("MainGUI.MainTitle")+ ": "+sellerMail);
