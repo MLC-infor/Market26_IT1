@@ -144,6 +144,7 @@ public class BLFacadeImplementation implements BLFacade {
     }
     
     @Override
+    @WebMethod
     public float getValoracionMedia(String emailVendedor) {
         dbManager.open();
         float media = dbManager.getValoracionMedia(emailVendedor);
@@ -152,6 +153,7 @@ public class BLFacadeImplementation implements BLFacade {
     }
     
     @Override
+    @WebMethod
     public boolean comprarSuscripcionVIP(String emailUsuario) {
         dbManager.open();
         boolean exito = dbManager.comprarSuscripcionVIP(emailUsuario);
@@ -160,6 +162,7 @@ public class BLFacadeImplementation implements BLFacade {
     }
     
     @Override
+    @WebMethod
     public domain.Pregunta hacerPregunta(String duda, Integer idVenta, String emailComprador) {
         dbManager.open();
         domain.Pregunta p = dbManager.hacerPregunta(duda, idVenta, emailComprador);
@@ -168,6 +171,7 @@ public class BLFacadeImplementation implements BLFacade {
     }
 
     @Override
+    @WebMethod
     public boolean responderPregunta(Integer idPregunta, String respuesta) {
         dbManager.open();
         boolean exito = dbManager.responderPregunta(idPregunta, respuesta);
@@ -176,6 +180,7 @@ public class BLFacadeImplementation implements BLFacade {
     }
     
     @Override
+    @WebMethod
     public float getSaldoUsuario(String email) {
         dbManager.open();
         float saldo = dbManager.getSaldoUsuario(email);

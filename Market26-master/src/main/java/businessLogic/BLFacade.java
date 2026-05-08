@@ -54,19 +54,24 @@ public interface BLFacade {
      * @param emailVendedor El email del vendedor a consultar.
      * @return La media sobre 5, o 0.0 si no tiene valoraciones.
      */
+    @WebMethod
     public float getValoracionMedia(String emailVendedor);
     
+    @WebMethod
     public boolean comprarSuscripcionVIP(String emailUsuario);
     
     /**
      * Un comprador hace una pregunta en una venta.
      */
+    @WebMethod
     public domain.Pregunta hacerPregunta(String duda, Integer idVenta, String emailComprador);
 
     /**
      * El vendedor responde a una pregunta existente.
      */
+    @WebMethod
     public boolean responderPregunta(Integer idPregunta, String respuesta);
     
+    @WebMethod
     public float getSaldoUsuario(String email);
 }
